@@ -6,6 +6,7 @@ using UnityEngine;
 public class InputManager : MonoBehaviour
 {
     public static Action<Define.MouseType> MouseEvent = null;
+    public static Action<Define.KeyType> KeyEvent = null;
 
     bool _pressed = false;
     float _pressedTime = 0.0f;
@@ -35,7 +36,12 @@ public class InputManager : MonoBehaviour
                 MouseEvent.Invoke(Define.MouseType.None);
             }
         }
-            
+        
+        if(KeyEvent != null)
+        {
+            if(Input.GetKey(KeyCode.Space))
+                KeyEvent.Invoke(Define.KeyType.Jump);
+        }
     }
 }
 

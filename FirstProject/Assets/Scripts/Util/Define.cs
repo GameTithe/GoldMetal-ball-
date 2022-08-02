@@ -4,6 +4,10 @@ using UnityEngine;
 
 public class Define
 {
+    public enum KeyType
+    {
+        Jump,
+    }
     public enum MouseType
     {
         None,
@@ -14,7 +18,6 @@ public class Define
     {
         Idle,
         Moving,
-        JUMP,
         Die,
     }
     public enum Layer

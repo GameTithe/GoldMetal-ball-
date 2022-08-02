@@ -7,6 +7,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     protected float _speed = 5.0f;
 
+    [SerializeField]
+    protected float _jumpPower = 10.0f;
+
     protected Define.State _state = Define.State.Idle;
 
     public Define.State State
@@ -27,10 +30,6 @@ public class PlayerController : MonoBehaviour
                     _anim.Play("WAIT");
                     break;
 
-                case Define.State.JUMP:
-                    _anim.Play("JUMP");
-                    break;
-
                 case Define.State.Die:
                     break;
 
@@ -47,6 +46,10 @@ public class PlayerController : MonoBehaviour
         InputManager.MouseEvent -= OnMouseEvent;
         InputManager.MouseEvent += OnMouseEvent;
 
+        InputManager.KeyEvent -= OnKeyEvent;
+        InputManager.KeyEvent += OnKeyEvent;
+
+
     }
 
     Vector3 _dest;
@@ -55,6 +58,7 @@ public class PlayerController : MonoBehaviour
     int _mask = 1 << (int)Define.Layer.Ground;
     void Update()
     {
+       
         switch (_state)
         {
             case Define.State.Idle:
@@ -65,9 +69,41 @@ public class PlayerController : MonoBehaviour
                 UpdateMoving();
                 break;
 
-            case Define.State.Die:
+            case Define.State.Die: 
+                break;
+
+        }
+    }
+    private void FixedUpdate()
+    {
+    }
+
+
+    bool _isJump = false;
+
+    void OnKeyEvent(Define.KeyType evt)
+    {
+        switch (evt)
+        {
+            case Define.KeyType.Jump:
+                if(!_isJump)
+                    UpdateJumping();
                 break;
         }
+
+    }
+    void UpdateJumping()
+    {
+        _isJump = true;
+
+        Animator _anim = GetComponent<Animator>();
+        _anim.Play("JUMP");
+
+        Rigidbody _rigid = GetComponent<Rigidbody>();
+        _rigid.AddForce(Vector3.up * _jumpPower, ForceMode.Impulse);
+        Debug.Log($"Jump {Vector3.up * _jumpPower * 100} ");
+
+        _isJump = false;
     }
     void UpdateIdle()
     {
@@ -103,11 +139,6 @@ public class PlayerController : MonoBehaviour
 
             }
         }
-    }
-
-    void UpdateJumping()
-    {
-
     }
 
     void OnMouseEvent(Define.MouseType evt)
@@ -146,9 +177,7 @@ public class PlayerController : MonoBehaviour
                     {
                         _dest = hit.point;
                         UpdateMoving();
-
                     }
-
                 }
                 break;
             case Define.MouseType.None:
